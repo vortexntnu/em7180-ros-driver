@@ -41,9 +41,9 @@ from std_msgs.msg import String
 from std_msgs.msg import Float64
 
 def callback(data):
-    rospy.loginfo(rospy.get_caller_id() + 'Temperature is %s \n', data.data)
+    rospy.loginfo(rospy.get_caller_id() + 'Temperature is: %s \n', data.data)
 def callback2(data):
-    rospy.loginfo(rospy.get_caller_id() + 'Pitch is %s', data.data)
+    rospy.loginfo(rospy.get_caller_id() + 'Pitch is: %s', data.data)
 
 def listener():
 
