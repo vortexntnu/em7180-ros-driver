@@ -22,7 +22,7 @@ Python SMbus requires root access. It may therefore be required to run it as roo
 You could however consider adding the user to the I2C usergroup to avoid running the package as root.
 
     #To run the publisher:
-    rosrun ros_em7180 masteretst.py
+    rosrun ros_em7180 mastertest.py
     
     #To run the listener:
     rosrun ros_em7180 listener.py
