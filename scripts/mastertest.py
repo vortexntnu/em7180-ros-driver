@@ -78,7 +78,7 @@ while True:
 		pub_gz = rospy.Publisher('gz', Float64, queue_size=10)
 		pub_pressure = rospy.Publisher('pressure', Float64, queue_size=10)
 		pub_altitude = rospy.Publisher('altitude', Float64, queue_size=10)
-		rospy.init_node('talker_temp', anonymous=True)
+		rospy.init_node('em7180', anonymous=True)
 		rate = rospy.Rate(10) # 10hz
 		the_str = "Temp: %2.2f C ; Pitch: %2.2f ; Roll: %2.2f ; Yaw: %2.2f ; Accel: %2.2f %2.2f %2.2f; Gyro: %2.2f %2.2f %2.2f ; Pressure: %2.2f mbar; Altitude: %2.2f m"   % (temp, pitch1, roll1, yaw1, ax1, ay1, az1, gx1, gy1, gz1, pressure1, altitude1)
 		rospy.loginfo(the_str)
@@ -94,6 +94,7 @@ while True:
 		pub_gz.publish(gz1)
 		pub_pressure.publish(pressure1)
 		pub_altitude.publish(altitude1)
+		#rate.sleep()
 
     if (em7180.gotQuaternion()):
 
@@ -140,7 +141,11 @@ while True:
         altitude = (1.0 - math.pow(pressure / 1013.25, 0.190295)) * 44330
         #print('  Altitude = %2.2f m\n' % altitude) 
         
-	talker(temperature, pitch, roll, yaw, ax, ay, az, gx, gy, gz, pressure, altitude)
+	if __name__ == '__main__':
+		try:
+			talker(temperature, pitch, roll, yaw, ax, ay, az, gx, gy, gz, pressure, altitude)
+		except rospy.ROSInterruptException:
+			pass
     
-    #time.sleep(.05)
-    rospy.Rate(10).sleep() # 10Hz
+    time.sleep(.1)
+    #rospy.Rate(5).sleep() # 10=10Hz; 1=1sec
