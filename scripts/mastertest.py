@@ -21,12 +21,56 @@
 
 from em7180 import EM7180_Master
 
+
 import math
 import time
 
 import rospy
-from std_msgs.msg import String
-from std_msgs.msg import Float64
+
+# Ros messages
+##from sensor_msgs.msg import Imu
+from ros_em7180.msg import Ximu
+#from geometry_msgs.msg import Vector3
+
+#This gives the following output
+#std_msgs/Header header
+#  uint32 seq
+#  time stamp
+#  string frame_id
+#geometry_msgs/Quaternion orientation
+#  float64 x
+#  float64 y
+#  float64 z
+#  float64 w
+#float64[9] orientation_covariance
+#geometry_msgs/Vector3 angular_velocity
+#  float64 x
+#  float64 y
+#  float64 z
+#float64[9] angular_velocity_covariance
+#geometry_msgs/Vector3 linear_acceleration
+#  float64 x
+#  float64 y
+#  float64 z
+#float64[9] linear_acceleration_covariance
+
+
+
+#from std_msgs.msg import String
+#from std_msgs.msg import Float64
+
+
+# -------------------------------------
+
+#
+	
+			
+
+		
+		
+		
+	
+	
 
 MAG_RATE       = 100  # Hz
 ACCEL_RATE     = 200  # Hz
@@ -65,36 +109,92 @@ while True:
     # more see http://en.wikipedia.org/wiki/Conversion_between_q_and_Euler_angles 
     # which has additional links.
     
-    def talker(temp, pitch1, roll1, yaw1, ax1, ay1, az1, gx1, gy1, gz1, pressure1, altitude1):
-		pub_temp = rospy.Publisher('temperature', Float64, queue_size=10)
-		pub_pitch = rospy.Publisher('pitch', Float64, queue_size=10)
-		pub_roll = rospy.Publisher('roll', Float64, queue_size=10)
-		pub_yaw = rospy.Publisher('yaw', Float64, queue_size=10)
-		pub_ax = rospy.Publisher('ax', Float64, queue_size=10)
-		pub_ay = rospy.Publisher('ay', Float64, queue_size=10)
-		pub_az = rospy.Publisher('az', Float64, queue_size=10)
-		pub_gx = rospy.Publisher('gx', Float64, queue_size=10)
-		pub_gy = rospy.Publisher('gy', Float64, queue_size=10)
-		pub_gz = rospy.Publisher('gz', Float64, queue_size=10)
-		pub_pressure = rospy.Publisher('pressure', Float64, queue_size=10)
-		pub_altitude = rospy.Publisher('altitude', Float64, queue_size=10)
+    def publishIMUSensorData(pitch, roll, yaw,angVelx,angVely,angVelz,linAccx,linAccy,linAccz, temp, press, alt):
+	
+		# Initialize node
 		rospy.init_node('em7180', anonymous=True)
-		rate = rospy.Rate(10) # 10hz
-		the_str = "Temp: %2.2f C ; Pitch: %2.2f ; Roll: %2.2f ; Yaw: %2.2f ; Accel: %2.2f %2.2f %2.2f; Gyro: %2.2f %2.2f %2.2f ; Pressure: %2.2f mbar; Altitude: %2.2f m"   % (temp, pitch1, roll1, yaw1, ax1, ay1, az1, gx1, gy1, gz1, pressure1, altitude1)
-		rospy.loginfo(the_str)
-		pub_temp.publish(temp)
-		pub_pitch.publish(pitch1)
-		pub_roll.publish(roll1)
-		pub_yaw.publish(yaw1)
-		pub_ax.publish(ax1)
-		pub_ay.publish(ay1)
-		pub_az.publish(az1)
-		pub_gx.publish(gx1)
-		pub_gy.publish(gy1)
-		pub_gz.publish(gz1)
-		pub_pressure.publish(pressure1)
-		pub_altitude.publish(altitude1)
-		#rate.sleep()
+	
+		# Publisher
+		imuSensorPublisher=rospy.Publisher('SensorData',Ximu,queue_size=10)
+	
+		rate=rospy.Rate(10)
+		
+		theXimu = Ximu()
+		
+		# Make a struct that contains the IMU data
+		imuMsg=theXimu.imu
+		
+		# Make a struct that contains the Temperature data
+		tempMsg = theXimu.temperature
+		
+		# Make a struct that contains the Pressure data
+		pressMsg = theXimu.pressure
+		
+		# Make a struct that contains the Altitude data
+		altMsg = theXimu.altitude
+		
+		# Set Temperature variables
+		tempMsg.header.stamp = rospy.Time.now()
+		
+		tempMsg.temperature = temp
+		tempMsg.variance = 0
+		
+		# Set Pressure variables
+		pressMsg.header.stamp = rospy.Time.now()
+		
+		pressMsg.fluid_pressure = press
+		pressMsg.variance = 0
+		
+		# Set Altitude variables
+		altMsg = alt
+		
+		# Covariance matricies
+		
+		#imuMsg.orientation_covariance=[0,0,0,0,0,0,0,0,0] # Place in the covariance matrix here
+		
+		
+		#imuMsg.angular_velocity_covariance=[0,0,0,0,0,0,0,0,0] # Place in the covariance matrix here
+		
+		
+		#imuMsg.linear_acceleration_covariance=[0,0,0,0,0,0,0,0,0] # Same here
+		
+		imuMsg.orientation_covariance[0]=-1
+		imuMsg.angular_velocity_covariance[0]=-1
+		imuMsg.linear_acceleration_covariance[0]=-1
+		
+		
+		# Place sensor data from IMU to message
+		
+		imuMsg.header.stamp=rospy.Time.now()
+		
+		
+		imuMsg.linear_acceleration.x=linAccx
+		imuMsg.linear_acceleration.y=linAccy
+		imuMsg.linear_acceleration.z=linAccz
+		
+		imuMsg.angular_velocity.x=angVelx
+		imuMsg.angular_velocity.y=angVely
+		imuMsg.angular_velocity.z=angVelz
+		
+		imuMsg.orientation.x=roll
+		imuMsg.orientation.y=pitch
+		imuMsg.orientation.z=yaw
+		
+		# Compile custom message
+		theXimu.imu = imuMsg
+		theXimu.temperature = tempMsg
+		theXimu.pressure = pressMsg
+		theXimu.altitude = altMsg
+			
+		imuSensorPublisher.publish(theXimu)
+			
+			# Info to ros_console and screen
+		rospy.loginfo("Publishing sensor data from IMU")
+		
+			# Sleep in order to maintain the rate
+		rate.sleep()
+    
+		
 
     if (em7180.gotQuaternion()):
 
@@ -143,9 +243,9 @@ while True:
         
 	if __name__ == '__main__':
 		try:
-			talker(temperature, pitch, roll, yaw, ax, ay, az, gx, gy, gz, pressure, altitude)
+			publishIMUSensorData(pitch, roll, yaw, gx, gy, gz, ax, ay, az, temperature, pressure, altitude)
 		except rospy.ROSInterruptException:
 			pass
     
-    time.sleep(.1)
+    #time.sleep(.1)
     #rospy.Rate(5).sleep() # 10=10Hz; 1=1sec

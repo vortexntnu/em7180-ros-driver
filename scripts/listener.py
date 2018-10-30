@@ -39,6 +39,7 @@
 import rospy
 from std_msgs.msg import String
 from std_msgs.msg import Float64
+from ros_em7180.msg import Ximu
 from Tkinter import Tk, Label, Button, W, E, StringVar
 root = Tk()
 
@@ -56,54 +57,23 @@ gpressure = StringVar(root) # callback11
 galtitude = StringVar(root) # callback12
 
 
-def callback1(data):
-	global gtemp
-	#rospy.loginfo(rospy.get_caller_id() + 'Temperature is: %s \n', data.data)
-	gtemp.set('%2.2f C' % data.data)
-def callback2(data):
-	global gpitch
-	#rospy.loginfo(rospy.get_caller_id() + 'Pitch is: %s', data.data)
-	gpitch.set('%2.2f rad' % data.data)
-def callback3(data):
-	global groll
-	#rospy.loginfo(rospy.get_caller_id() + 'Roll is: %s', data.data)
-	groll.set('%2.2f' % data.data)
-def callback4(data):
-	global gyaw
-	#rospy.loginfo(rospy.get_caller_id() + 'Yaw is: %s', data.data)
-	gyaw.set('%2.2f' % data.data)
-def callback5(data):
-	global gax
-	#rospy.loginfo(rospy.get_caller_id() + 'ax is: %s', data.data)
-	gax.set('%2.2f x' % data.data)
-def callback6(data):
-	global gay
-	#rospy.loginfo(rospy.get_caller_id() + 'ay is: %s', data.data)
-	gay.set('%2.2f y' % data.data)
-def callback7(data):
-	global gaz
-	#rospy.loginfo(rospy.get_caller_id() + 'az is: %s', data.data)
-	gaz.set('%2.2f z' % data.data)
-def callback8(data):
-	global ggx
-	#rospy.loginfo(rospy.get_caller_id() + 'gx is: %s', data.data)
-	ggx.set('%2.2f x' % data.data)
-def callback9(data):
-	global ggy
-	#rospy.loginfo(rospy.get_caller_id() + 'gy is: %s', data.data)
-	ggy.set('%2.2f y' % data.data)
-def callback10(data):
-	global ggz
-	#rospy.loginfo(rospy.get_caller_id() + 'gz is: %s', data.data)
-	ggz.set('%2.2f z' % data.data)
-def callback11(data):
-	global gpressure
-	#rospy.loginfo(rospy.get_caller_id() + 'Pressure is: %s', data.data)
-	gpressure.set('%2.2f mbar' % data.data)
-def callback12(data):
-	global galtitude
-	#rospy.loginfo(rospy.get_caller_id() + 'Altitude is: %s', data.data)
-	galtitude.set('%2.2f m' % data.data)
+# Parse the data from the subscriber
+def callback(data):
+	gtemp.set('%2.2f C' % data.temperature.temperature)
+	gpressure.set('%2.2f mbar' % data.pressure.fluid_pressure)
+	galtitude.set('%2.2f m' % data.altitude)
+	
+	groll.set('%2.2f ' % data.imu.orientation.x)
+	gpitch.set('%2.2f ' % data.imu.orientation.y)
+	gyaw.set('%2.2f ' % data.imu.orientation.z)
+	
+	gax.set('%2.2f x' % data.imu.linear_acceleration.x)
+	gay.set('%2.2f y' % data.imu.linear_acceleration.y)
+	gaz.set('%2.2f z' % data.imu.linear_acceleration.z)
+	
+	ggx.set('%2.2f x' % data.imu.angular_velocity.x)
+	ggy.set('%2.2f y' % data.imu.angular_velocity.y)
+	ggz.set('%2.2f z' % data.imu.angular_velocity.z)
 
 
 
@@ -119,22 +89,12 @@ def listener():
 	rospy.init_node('listener', anonymous=True)
 
 	#rospy.Subscriber('chatter', String, callback)
-	rospy.Subscriber('temperature', Float64, callback1)
-	rospy.Subscriber('pitch', Float64, callback2)
-	rospy.Subscriber('roll', Float64, callback3)
-	rospy.Subscriber('yaw', Float64, callback4)
-	rospy.Subscriber('ax', Float64, callback5)
-	rospy.Subscriber('ay', Float64, callback6)
-	rospy.Subscriber('az', Float64, callback7)
-	rospy.Subscriber('gx', Float64, callback8)
-	rospy.Subscriber('gy', Float64, callback9)
-	rospy.Subscriber('gz', Float64, callback10)
-	rospy.Subscriber('pressure', Float64, callback11)
-	rospy.Subscriber('altitude', Float64, callback12)
+	rospy.Subscriber('SensorData', Ximu, callback)
 
 	# spin() simply keeps python from exiting until this node is stopped
 	#rospy.spin()
 
+# GUI stuff
 root.title("ROS EM7180")
 
 label = Label(root, text="Displaying data collected from EM7180 IMU")
