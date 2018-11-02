@@ -116,10 +116,10 @@ while True:
     def publishIMUSensorData(pitch, roll, yaw,angVelx,angVely,angVelz,linAccx,linAccy,linAccz, temp, press, alt):
 	
 		# Initialize node
-		rospy.init_node('em7180', anonymous=True)
+		rospy.init_node('em7180', anonymous=False)
 	
 		# Publisher
-		imuSensorPublisher=rospy.Publisher('EM7180_SensorData',Ximu,queue_size=10)
+		imuSensorPublisher=rospy.Publisher('sensors/imus/em7180',Ximu,queue_size=10)
 	
 		rate=rospy.Rate(10)
 		

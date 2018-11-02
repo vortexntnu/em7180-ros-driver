@@ -96,10 +96,10 @@ def subscriberEM7180():
 	# anonymous=True flag means that rospy will choose a unique
 	# name for our 'listener' node so that multiple listeners can
 	# run simultaneously.
-	rospy.init_node('subscriberEM7180', anonymous=True)
+	rospy.init_node('subscriberEM7180', anonymous=False)
 
 	#rospy.Subscriber('chatter', String, callback)
-	rospy.Subscriber('EM7180_SensorData', Ximu, callback)
+	rospy.Subscriber('sensors/imus/em7180', Ximu, callback)
 
 	# spin() simply keeps python from exiting until this node is stopped
 	#rospy.spin()
