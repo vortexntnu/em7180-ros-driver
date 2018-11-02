@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Software License Agreement (BSD License)
 #
-# Copyright (c) 2008, Willow Garage, Inc.
+# Copyright (c) Vortex NTNU.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -33,28 +33,38 @@
 #
 # Revision $Id$
 
-## Simple talker demo that listens to std_msgs/Strings published 
-## to the 'chatter' topic
+## subscriberEM7180.py displays the data received by subscribing to the 
+## topic /SensorData published by EM7180Publisher. The code is meant to 
+## serve as an example on how to fetch data from the topic. It's also useful 
+## for debugging purposes as it displays the data and visualizes the position 
+## in 3D space.
 
 import rospy
+import math
+import time
+from datetime import datetime
 from std_msgs.msg import String
 from std_msgs.msg import Float64
 from ros_em7180.msg import Ximu
-from Tkinter import Tk, Label, Button, W, E, StringVar
-root = Tk()
+from Tkinter import *
 
-gtemp = StringVar(root) # callback1
-gpitch = StringVar(root) # callback2
-groll = StringVar(root) # callback3
-gyaw = StringVar(root) # callback4
-gax = StringVar(root) # callback5
-gay = StringVar(root) # callback6
-gaz = StringVar(root) # callback7
-ggx = StringVar(root) # callback8
-ggy = StringVar(root) # callback9
-ggz = StringVar(root) # callback10
-gpressure = StringVar(root) # callback11
-galtitude = StringVar(root) # callback12
+# GUI stuff
+root = Tk()
+root.geometry("900x700")
+
+# Global variables to handle all the data fetched from the sensor
+gtemp = StringVar(root) # Temperature
+gpitch = DoubleVar(root) # Pitch in Degrees (y)
+groll = DoubleVar(root) # Roll in Degrees (z)
+gyaw = DoubleVar(root) # Yaw in Degrees (x)
+gax = StringVar(root) # Acceleration in X-axis
+gay = StringVar(root) # Acceleration in Y-axis
+gaz = StringVar(root) # Acceleration in Z-axis
+ggx = StringVar(root) # Gyro in X-axis
+ggy = StringVar(root) # Gyro in Y-axis
+ggz = StringVar(root) # Gyro in Z-axis
+gpressure = StringVar(root) # Pressure in mbar
+galtitude = StringVar(root) # Altitude in meters
 
 
 # Parse the data from the subscriber
@@ -63,9 +73,9 @@ def callback(data):
 	gpressure.set('%2.2f mbar' % data.pressure.fluid_pressure)
 	galtitude.set('%2.2f m' % data.altitude)
 	
-	groll.set('%2.2f ' % data.imu.orientation.x)
-	gpitch.set('%2.2f ' % data.imu.orientation.y)
-	gyaw.set('%2.2f ' % data.imu.orientation.z)
+	groll.set('%2.2f' % data.imu.orientation.x)
+	gpitch.set('%2.2f' % data.imu.orientation.y)
+	gyaw.set('%2.2f' % data.imu.orientation.z)
 	
 	gax.set('%2.2f x' % data.imu.linear_acceleration.x)
 	gay.set('%2.2f y' % data.imu.linear_acceleration.y)
@@ -75,21 +85,21 @@ def callback(data):
 	ggy.set('%2.2f y' % data.imu.angular_velocity.y)
 	ggz.set('%2.2f z' % data.imu.angular_velocity.z)
 
+	doDraw()
 
 
 
-
-def listener():
+def subscriberEM7180():
 
 	# In ROS, nodes are uniquely named. If two nodes with the same
 	# name are launched, the previous one is kicked off. The
 	# anonymous=True flag means that rospy will choose a unique
 	# name for our 'listener' node so that multiple listeners can
 	# run simultaneously.
-	rospy.init_node('listener', anonymous=True)
+	rospy.init_node('subscriberEM7180', anonymous=False)
 
 	#rospy.Subscriber('chatter', String, callback)
-	rospy.Subscriber('SensorData', Ximu, callback)
+	rospy.Subscriber('sensors/imus/em7180', Ximu, callback)
 
 	# spin() simply keeps python from exiting until this node is stopped
 	#rospy.spin()
@@ -99,7 +109,7 @@ root.title("ROS EM7180")
 
 label = Label(root, text="Displaying data collected from EM7180 IMU")
 label.grid(columnspan=5, sticky=W)
-label.config(font=("Courier", 30))
+label.config(font=("Courier", 26))
 
 label_ph2 = Label(root,  text="             ")
 label_ph2.grid(row=1, column=2)
@@ -185,10 +195,101 @@ label_alt = Label(root,  textvariable=galtitude)
 label_alt.grid(row=10, column=1)
 label_alt.config(font=("Courier", 22))
 
+#Define Canvas for displaying 3D cube to visualize positioning in 3D space
+cubeCanvas = Canvas(root, width=300, height=300)
+cubeCanvas.grid(row=11, columnspan=2)
+
+
+def rotY(x, y, z, angle):
+	#Rotates the point around the X axis by the given angle in degrees
+	rad = math.radians(angle)
+	cosa = math.cos(rad)
+	sina = math.sin(rad)
+	ny = y*cosa - z*sina
+	nz = y*sina + z*cosa
+	nx = x
+	return nx, ny, nz
+
+def rotX(x, y, z, angle):
+	#Rotates the point around the Y axis by the given angle in degrees
+	rad = math.radians(angle) #angle* math.pi/180
+	cosa = math.cos(rad)
+	sina = math.sin(rad)
+	nz = z * cosa - x * sina
+	nx = z * sina + x * cosa
+	ny = y
+	return nx, ny, nz
+
+def rotZ(x, y, z, angle):
+	#Rotates the point around the Z axis by the given angle in degrees
+	rad = math.radians(angle)
+	cosa = math.cos(rad)
+	sina = math.sin(rad)
+	nx = x * cosa - y * sina
+	ny = x * sina + y * cosa
+	nz = z
+	return nx, ny, nz
+
+def get2DPoint(x, y, z):
+	#3D projections onto 2D plane
+	win_width = 300
+	win_height = 300
+	fov = 256
+	viewer_distance = 4
+	
+	factor = fov / (viewer_distance + z)
+	nx = x * factor + win_width / 2
+	ny = -y * factor + win_height / 2
+	return nx, ny
+
+def getPoint(x, y, z):
+	# Do the whole point calculation
+	nx, ny, nz = rotY(x, y, z, gpitch.get()) #gpitch.get()
+	nx, ny, nz = rotX(nx, ny, nz, gyaw.get())#gyaw.get()
+	nx, ny, nz = rotZ(nx, ny, nz, groll.get())
+	nx, ny = get2DPoint(nx, ny, nz)
+	
+	return nx, ny
+
+def doDraw():
+	# The cube itself
+	#c = cube. Fr,Le,Ri,Ba = Front-,Left-,Right-,Back- plane. L,R = Left-,Right- side of plane. t,b = top,bottom.
+	#front=red. left=green. right=blue. back=yellow
+	
+	cFrLt = getPoint(-1, 1, -1)
+	cFrRt = getPoint(1, 1, -1)
+	cFrLb = getPoint(-1, -1, -1)
+	cFrRb = getPoint(1, -1, -1)
+
+	cLeLt = getPoint(-1, 1, 1)
+	cLeRt = getPoint(-1, 1, -1)
+	cLeLb = getPoint(-1, -1, 1)
+	cLeRb = getPoint(-1, -1, -1)
+
+	cRiLt = getPoint(1, 1, -1)
+	cRiRt = getPoint(1, 1, 1)
+	cRiLb = getPoint(1, -1, -1)
+	cRiRb = getPoint(1, -1, 1)
+
+	cBaLt = getPoint(1, 1, 1)
+	cBaRt = getPoint(-1, 1, 1)
+	cBaLb = getPoint(1, -1, 1)
+	cBaRb = getPoint(-1, -1, 1)
+
+	cubeCanvas.delete(ALL) #Called to refresh the canvas.
+
+	cubeFront = cubeCanvas.create_polygon([cFrLt[0],cFrLt[1],cFrRt[0],cFrRt[1],cFrRb[0],cFrRb[1],cFrLb[0],cFrLb[1]], fill='', width=5, outline='red')
+
+	cubeLeft = cubeCanvas.create_polygon([cLeLt[0],cLeLt[1],cLeRt[0],cLeRt[1],cLeRb[0],cLeRb[1],cLeLb[0],cLeLb[1]], fill='', width=5, outline='green')
+
+	cubeRight = cubeCanvas.create_polygon([cRiLt[0],cRiLt[1],cRiRt[0],cRiRt[1],cRiRb[0],cRiRb[1],cRiLb[0],cRiLb[1]], fill='', width=5, outline='blue')
+
+	cubeBack = cubeCanvas.create_polygon([cBaLt[0],cBaLt[1],cBaRt[0],cBaRt[1],cBaRb[0],cBaRb[1],cBaLb[0],cBaLb[1]], fill='', width=5, outline='yellow')#
 
 	
 if __name__ == '__main__':
-		listener()
+	subscriberEM7180()
+
 		
 
 root.mainloop()

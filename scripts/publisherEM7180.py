@@ -1,22 +1,26 @@
 #!/usr/bin/env python
 '''
-   mastertest.py: Example Python script for running EM7180 SENtral sensor hub in master mode.
+   publisherEM7180.py uses parts of
+		mastertest.py: Example Python script for running EM7180 SENtral sensor hub in master mode.
 
-   Copyright (C) 2018 Simon D. Levy
+		Copyright (C) 2018 Simon D. Levy
 
-   This file is part of EM7180.
+		This file is part of EM7180.
 
-   EM7180 is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
+		EM7180 is free software: you can redistribute it and/or modify
+		it under the terms of the GNU General Public License as published by
+		the Free Software Foundation, either version 3 of the License, or
+		(at your option) any later version.
 
-   EM7180 is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-   You should have received a copy of the GNU General Public License
-   along with EM7180.  If not, see <http://www.gnu.org/licenses/>.
+		EM7180 is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+		GNU General Public License for more details.
+		You should have received a copy of the GNU General Public License
+		along with EM7180.  If not, see <http://www.gnu.org/licenses/>.
+
+	publisherEM7180.py is a part of ros_EM7180. A package for ROS to be used with the EM7180 IMU
+	This project is maintained by vortexntnu
 '''
 
 from em7180 import EM7180_Master
@@ -112,10 +116,10 @@ while True:
     def publishIMUSensorData(pitch, roll, yaw,angVelx,angVely,angVelz,linAccx,linAccy,linAccz, temp, press, alt):
 	
 		# Initialize node
-		rospy.init_node('em7180', anonymous=True)
+		rospy.init_node('em7180', anonymous=False)
 	
 		# Publisher
-		imuSensorPublisher=rospy.Publisher('SensorData',Ximu,queue_size=10)
+		imuSensorPublisher=rospy.Publisher('sensors/imus/em7180',Ximu,queue_size=10)
 	
 		rate=rospy.Rate(10)
 		
