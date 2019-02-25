@@ -33,6 +33,7 @@ import rospy
 
 # Ros messages
 ##from sensor_msgs.msg import Imu
+from sensor_msgs.msg import MagneticField
 from ros_em7180.msg import Ximu
 #from geometry_msgs.msg import Vector3
 
@@ -113,7 +114,7 @@ while True:
     # more see http://en.wikipedia.org/wiki/Conversion_between_q_and_Euler_angles 
     # which has additional links.
     
-    def publishIMUSensorData(pitch, roll, yaw,angVelx,angVely,angVelz,linAccx,linAccy,linAccz, temp, press, alt):
+    def publishIMUSensorData(pitch, roll, yaw,angVelx,angVely,angVelz,linAccx,linAccy,linAccz, temp, press, alt,magX, magY, magZ):
 	
 		# Initialize node
 		rospy.init_node('em7180', anonymous=False)
@@ -122,7 +123,12 @@ while True:
 		imuSensorPublisher=rospy.Publisher('sensors/imus/em7180',Ximu,queue_size=10)
 	
 		rate=rospy.Rate(10)
+
+
+		# Initilize objects
 		
+		magneticVector = MagneticField()
+
 		theXimu = Ximu()
 		
 		# Make a struct that contains the IMU data
@@ -189,8 +195,17 @@ while True:
 		theXimu.temperature = tempMsg
 		theXimu.pressure = pressMsg
 		theXimu.altitude = altMsg
+
+		magneticVector.header.stamp=ros.Time.now()
+		magneticVector.header.frame_id="magnetometer_link"
+
+		magneticVector.magnetic_field.x=magX
+		magneticVector.magnetic_field.y=magY
+		magneticVector.magnetic_field.z=magZ
+
 			
 		imuSensorPublisher.publish(theXimu)
+		imuSensorPublisher.publish(magneticVector)
 			
 			# Info to ros_console and screen
 		rospy.loginfo("Publishing sensor data from IMU")
@@ -202,7 +217,7 @@ while True:
 
     if (em7180.gotQuaternion()):
 
-        qw, qx, qy, qz = em7180.readQuaternion()
+		qw, qx, qy, qz = em7180.readQuaternion()
 
         roll  = math.atan2(2.0 * (qw * qx + qy * qz), qw * qw - qx * qx - qy * qy + qz * qz)
         pitch = -math.asin(2.0 * (qx * qz - qw * qy))
@@ -218,13 +233,13 @@ while True:
 
     if em7180.gotAccelerometer():
 
-        ax,ay,az = em7180.readAccelerometer()
+		ax,ay,az = em7180.readAccelerometer()
         
         #print('Accel: %+3.3f %+3.3f %+3.3f' % (ax,ay,az))
 
     if em7180.gotGyrometer():
 
-        gx,gy,gz = em7180.readGyrometer()
+		gx,gy,gz = em7180.readGyrometer()
 
         #print('Gyro: %+3.3f %+3.3f %+3.3f' % (gx,gy,gz))
     
@@ -237,17 +252,22 @@ while True:
 
     if em7180.gotBarometer():
     
-        pressure, temperature = em7180.readBarometer()
+		pressure, temperature = em7180.readBarometer()
 
         #print('Baro:')
         #print('  Altimeter temperature = %2.2f C' % temperature) 
         #print('  Altimeter pressure = %2.2f mbar' % pressure) 
-        altitude = (1.0 - math.pow(pressure / 1013.25, 0.190295)) * 44330
+		altitude = (1.0 - math.pow(pressure / 1013.25, 0.190295)) * 44330
         #print('  Altitude = %2.2f m\n' % altitude) 
+
+	if em7180.gotMagnetometer():
+
+		mx,my,mz = em7180.readMagnetometer()
+		
         
 	if __name__ == '__main__':
 		try:
-			publishIMUSensorData(pitch, roll, yaw, gx, gy, gz, ax, ay, az, temperature, pressure, altitude)
+			publishIMUSensorData(pitch, roll, yaw, gx, gy, gz, ax, ay, az, temperature, pressure, altitude,mx,my,mz)
 		except rospy.ROSInterruptException:
 			pass
     
