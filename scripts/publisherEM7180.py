@@ -121,6 +121,7 @@ while True:
 	
 		# Publisher
 		imuSensorPublisher=rospy.Publisher('sensors/imus/em7180',Ximu,queue_size=10)
+		magneticFieldPublisher=rospy.Publisher('imu/mag',MagneticField,queue_size=10)
 	
 		rate=rospy.Rate(10)
 
@@ -196,6 +197,8 @@ while True:
 		theXimu.pressure = pressMsg
 		theXimu.altitude = altMsg
 
+		# Magnetic field vector
+
 		magneticVector.header.stamp=ros.Time.now()
 		magneticVector.header.frame_id="magnetometer_link"
 
@@ -205,7 +208,7 @@ while True:
 
 			
 		imuSensorPublisher.publish(theXimu)
-		imuSensorPublisher.publish(magneticVector)
+		magneticFieldPublisher.publish(magneticVector)
 			
 			# Info to ros_console and screen
 		rospy.loginfo("Publishing sensor data from IMU")
