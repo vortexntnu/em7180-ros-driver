@@ -206,6 +206,7 @@ while True:
 		magneticVector.magnetic_field.y=magY
 		magneticVector.magnetic_field.z=magZ
 
+		magneticVector.magnetic_field_covariance=[700,0,0,0,700,0,0,0,700] 
 			
 		imuSensorPublisher.publish(theXimu)
 		magneticFieldPublisher.publish(magneticVector)
