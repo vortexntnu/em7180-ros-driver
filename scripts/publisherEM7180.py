@@ -87,16 +87,16 @@ em7180 = EM7180_Master(MAG_RATE, ACCEL_RATE, GYRO_RATE, BARO_RATE, Q_RATE_DIVISO
 
 # Start the EM7180 in master mode
 if not em7180.begin():
-    print(em7180.getErrorString())
-    exit(1)
+	print(em7180.getErrorString())
+	exit(1)
 
 while True:
 
-    em7180.checkEventStatus()
+	em7180.checkEventStatus()
 
-    if em7180.gotError():
-        print('ERROR: ' + em7180.getErrorString())
-        exit(1)
+	if em7180.gotError():
+		print('ERROR: ' + em7180.getErrorString())
+		exit(1)
 
     # Define output variables from updated quaternion---these are Tait-Bryan
     # angles, commonly used in aircraft orientation.  In this coordinate
@@ -114,7 +114,7 @@ while True:
     # more see http://en.wikipedia.org/wiki/Conversion_between_q_and_Euler_angles 
     # which has additional links.
     
-    def publishIMUSensorData(pitch, roll, yaw,angVelx,angVely,angVelz,linAccx,linAccy,linAccz, temp, press, alt,magX, magY, magZ):
+	def publishIMUSensorData(pitch, roll, yaw,angVelx,angVely,angVelz,linAccx,linAccy,linAccz, temp, press, alt,magX, magY, magZ):
 	
 		# Initialize node
 		rospy.init_node('em7180', anonymous=False)
@@ -199,7 +199,7 @@ while True:
 
 		# Magnetic field vector
 
-		magneticVector.header.stamp=ros.Time.now()
+		magneticVector.header.stamp=rospy.Time.now()
 		magneticVector.header.frame_id="magnetometer_link"
 
 		magneticVector.magnetic_field.x=magX
@@ -218,29 +218,29 @@ while True:
     
 		
 
-    if (em7180.gotQuaternion()):
+	if (em7180.gotQuaternion()):
 
 		qw, qx, qy, qz = em7180.readQuaternion()
 
-        roll  = math.atan2(2.0 * (qw * qx + qy * qz), qw * qw - qx * qx - qy * qy + qz * qz)
-        pitch = -math.asin(2.0 * (qx * qz - qw * qy))
-        yaw   = math.atan2(2.0 * (qx * qy + qw * qz), qw * qw + qx * qx - qy * qy - qz * qz)   
+		roll  = math.atan2(2.0 * (qw * qx + qy * qz), qw * qw - qx * qx - qy * qy + qz * qz)
+		pitch = -math.asin(2.0 * (qx * qz - qw * qy))
+		yaw   = math.atan2(2.0 * (qx * qy + qw * qz), qw * qw + qx * qx - qy * qy - qz * qz)   
 
-        pitch *= 180.0 / math.pi
-        yaw   *= 180.0 / math.pi 
-        yaw   += 13.8 # Declination at Danville, California is 13 degrees 48 minutes and 47 seconds on 2014-04-04
-        if yaw < 0: yaw   += 360.0  # Ensure yaw stays between 0 and 360
-        roll  *= 180.0 / math.pi
+		pitch *= 180.0 / math.pi
+		yaw   *= 180.0 / math.pi 
+		yaw   += 13.8 # Declination at Danville, California is 13 degrees 48 minutes and 47 seconds on 2014-04-04
+		if yaw < 0: yaw   += 360.0  # Ensure yaw stays between 0 and 360
+		roll  *= 180.0 / math.pi
 
         #print('Quaternion Roll, Pitch, Yaw: %+2.2f %+2.2f %+2.2f' % (roll, pitch, yaw))
 
-    if em7180.gotAccelerometer():
+	if em7180.gotAccelerometer():
 
 		ax,ay,az = em7180.readAccelerometer()
         
         #print('Accel: %+3.3f %+3.3f %+3.3f' % (ax,ay,az))
-
-    if em7180.gotGyrometer():
+	
+	if em7180.gotGyrometer():
 
 		gx,gy,gz = em7180.readGyrometer()
 
@@ -252,8 +252,8 @@ while True:
      #  rotation about the y-axis (-90 to +90) In this systen, the z-axis is
      #  pointing away from Earth, the +y-axis is at the 'top' of the device
      #  (cellphone) and the +x-axis points toward the right of the device.
-
-    if em7180.gotBarometer():
+	
+	if em7180.gotBarometer():
     
 		pressure, temperature = em7180.readBarometer()
 
