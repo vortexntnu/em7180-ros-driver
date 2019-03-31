@@ -1,0 +1,3 @@
+<launch>
+	<node pkg="ros_em7180" type="publisherEM7180.py" name="EM7180" />
+</launch>

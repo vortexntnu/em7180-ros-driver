@@ -68,14 +68,14 @@ from ros_em7180.msg import Ximu
 # -------------------------------------
 
 #
-	
-			
 
-		
-		
-		
-	
-	
+
+
+
+
+
+
+
 
 MAG_RATE       = 100  # Hz
 ACCEL_RATE     = 200  # Hz
@@ -111,86 +111,86 @@ while True:
     # angles as well as Euler angles are non-commutative that is, the get
     # the correct orientation the rotations must be applied in the correct
     # order which for this configuration is yaw, pitch, and then roll.  For
-    # more see http://en.wikipedia.org/wiki/Conversion_between_q_and_Euler_angles 
+    # more see http://en.wikipedia.org/wiki/Conversion_between_q_and_Euler_angles
     # which has additional links.
-    
+
 	def publishIMUSensorData(pitch, roll, yaw,angVelx,angVely,angVelz,linAccx,linAccy,linAccz, temp, press, alt,magX, magY, magZ):
-	
+
 		# Initialize node
 		rospy.init_node('em7180', anonymous=False)
-	
+
 		# Publisher
-		imuSensorPublisher=rospy.Publisher('sensors/imus/em7180',Ximu,queue_size=10)
+		#imuSensorPublisher=rospy.Publisher('sensors/imus/em7180',Ximu,queue_size=10)
 		magneticFieldPublisher=rospy.Publisher('imu/mag',MagneticField,queue_size=10)
-	
+
 		rate=rospy.Rate(10)
 
 
 		# Initilize objects
-		
+
 		magneticVector = MagneticField()
 
 		theXimu = Ximu()
-		
+
 		# Make a struct that contains the IMU data
 		imuMsg=theXimu.imu
-		
+
 		# Make a struct that contains the Temperature data
 		tempMsg = theXimu.temperature
-		
+
 		# Make a struct that contains the Pressure data
 		pressMsg = theXimu.pressure
-		
+
 		# Make a struct that contains the Altitude data
 		altMsg = theXimu.altitude
-		
+
 		# Set Temperature variables
 		tempMsg.header.stamp = rospy.Time.now()
-		
+
 		tempMsg.temperature = temp
 		tempMsg.variance = 0
-		
+
 		# Set Pressure variables
 		pressMsg.header.stamp = rospy.Time.now()
-		
+
 		pressMsg.fluid_pressure = press
 		pressMsg.variance = 0
-		
+
 		# Set Altitude variables
 		altMsg = alt
-		
+
 		# Covariance matricies
-		
+
 		#imuMsg.orientation_covariance=[0,0,0,0,0,0,0,0,0] # Place in the covariance matrix here
-		
-		
+
+
 		#imuMsg.angular_velocity_covariance=[0,0,0,0,0,0,0,0,0] # Place in the covariance matrix here
-		
-		
+
+
 		#imuMsg.linear_acceleration_covariance=[0,0,0,0,0,0,0,0,0] # Same here
-		
+
 		imuMsg.orientation_covariance[0]=-1
 		imuMsg.angular_velocity_covariance[0]=-1
 		imuMsg.linear_acceleration_covariance[0]=-1
-		
-		
+
+
 		# Place sensor data from IMU to message
-		
+
 		imuMsg.header.stamp=rospy.Time.now()
-		
-		
+
+
 		imuMsg.linear_acceleration.x=linAccx
 		imuMsg.linear_acceleration.y=linAccy
 		imuMsg.linear_acceleration.z=linAccz
-		
+
 		imuMsg.angular_velocity.x=angVelx
 		imuMsg.angular_velocity.y=angVely
 		imuMsg.angular_velocity.z=angVelz
-		
+
 		imuMsg.orientation.x=roll
 		imuMsg.orientation.y=pitch
 		imuMsg.orientation.z=yaw
-		
+
 		# Compile custom message
 		theXimu.imu = imuMsg
 		theXimu.temperature = tempMsg
@@ -206,18 +206,18 @@ while True:
 		magneticVector.magnetic_field.y=magY
 		magneticVector.magnetic_field.z=magZ
 
-		magneticVector.magnetic_field_covariance=[700,0,0,0,700,0,0,0,700] 
-			
-		imuSensorPublisher.publish(theXimu)
+		magneticVector.magnetic_field_covariance=[700,0,0,0,700,0,0,0,700]
+
+		#imuSensorPublisher.publish(theXimu)
 		magneticFieldPublisher.publish(magneticVector)
-			
+
 			# Info to ros_console and screen
 		rospy.loginfo("Publishing sensor data from IMU")
-		
+
 			# Sleep in order to maintain the rate
 		rate.sleep()
-    
-		
+
+
 
 	if (em7180.gotQuaternion()):
 
@@ -225,10 +225,10 @@ while True:
 
 		roll  = math.atan2(2.0 * (qw * qx + qy * qz), qw * qw - qx * qx - qy * qy + qz * qz)
 		pitch = -math.asin(2.0 * (qx * qz - qw * qy))
-		yaw   = math.atan2(2.0 * (qx * qy + qw * qz), qw * qw + qx * qx - qy * qy - qz * qz)   
+		yaw   = math.atan2(2.0 * (qx * qy + qw * qz), qw * qw + qx * qx - qy * qy - qz * qz)
 
 		pitch *= 180.0 / math.pi
-		yaw   *= 180.0 / math.pi 
+		yaw   *= 180.0 / math.pi
 		yaw   += 13.8 # Declination at Danville, California is 13 degrees 48 minutes and 47 seconds on 2014-04-04
 		if yaw < 0: yaw   += 360.0  # Ensure yaw stays between 0 and 360
 		roll  *= 180.0 / math.pi
@@ -238,42 +238,42 @@ while True:
 	if em7180.gotAccelerometer():
 
 		ax,ay,az = em7180.readAccelerometer()
-        
+
         #print('Accel: %+3.3f %+3.3f %+3.3f' % (ax,ay,az))
-	
+
 	if em7180.gotGyrometer():
 
 		gx,gy,gz = em7180.readGyrometer()
 
         #print('Gyro: %+3.3f %+3.3f %+3.3f' % (gx,gy,gz))
-    
+
      #  Or define output variable according to the Android system, where
      #  heading (0 to 360) is defined by the angle between the y-axis and True
      #  North, pitch is rotation about the x-axis (-180 to +180), and roll is
      #  rotation about the y-axis (-90 to +90) In this systen, the z-axis is
      #  pointing away from Earth, the +y-axis is at the 'top' of the device
      #  (cellphone) and the +x-axis points toward the right of the device.
-	
+
 	if em7180.gotBarometer():
-    
+
 		pressure, temperature = em7180.readBarometer()
 
         #print('Baro:')
-        #print('  Altimeter temperature = %2.2f C' % temperature) 
-        #print('  Altimeter pressure = %2.2f mbar' % pressure) 
+        #print('  Altimeter temperature = %2.2f C' % temperature)
+        #print('  Altimeter pressure = %2.2f mbar' % pressure)
 		altitude = (1.0 - math.pow(pressure / 1013.25, 0.190295)) * 44330
-        #print('  Altitude = %2.2f m\n' % altitude) 
+        #print('  Altitude = %2.2f m\n' % altitude)
 
 	if em7180.gotMagnetometer():
 
 		mx,my,mz = em7180.readMagnetometer()
-		
-        
+
+
 	if __name__ == '__main__':
 		try:
 			publishIMUSensorData(pitch, roll, yaw, gx, gy, gz, ax, ay, az, temperature, pressure, altitude,mx,my,mz)
 		except rospy.ROSInterruptException:
 			pass
-    
+
     #time.sleep(.1)
     #rospy.Rate(5).sleep() # 10=10Hz; 1=1sec
