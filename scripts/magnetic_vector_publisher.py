@@ -68,8 +68,7 @@ while True:
     if em7180.gotMagnetometer():
         mx, my, mz = em7180.readMagnetometer()
 
-    if __name__ == '__main__':
-        try:
-            publish_imu_sensor_data(mx, my, mz)
-        except rospy.ROSInterruptException:
-            pass
+    try:
+        publish_imu_sensor_data(mx, my, mz)
+    except rospy.ROSInterruptException:
+        pass
