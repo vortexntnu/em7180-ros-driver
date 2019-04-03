@@ -90,8 +90,8 @@ def publishVisulazationOfMagneticVector():
 		visualization.points[0].y = 0
 		visualization.points[0].z = 0
 		visualization.points[1].x = x_vector
-		visualization.points[1].x = y_vector
-		visualization.points[1].x = z_vector
+		visualization.points[1].y = y_vector
+		visualization.points[1].z = z_vector
 		visualization.pose.orientation.x =0
 		visualization.pose.orientation.y =0
 		visualization.pose.orientation.z =0
