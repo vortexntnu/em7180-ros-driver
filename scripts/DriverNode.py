@@ -19,7 +19,7 @@
 		You should have received a copy of the GNU General Public License
 		along with EM7180.  If not, see <http://www.gnu.org/licenses/>.
 
-	publisherEM7180.py is a part of ros_EM7180. A package for ROS to be used with the EM7180 IMU
+	publisherEM7180.py is a part of em7180. A package for ROS to be used with the EM7180 IMU
 	This project is maintained by vortexntnu
 '''
 
@@ -34,7 +34,7 @@ import rospy
 # Ros messages
 ##from sensor_msgs.msg import Imu
 from sensor_msgs.msg import MagneticField
-from ros_em7180.msg import Ximu
+from em7180.msg import Ximu
 #from geometry_msgs.msg import Vector3
 
 #This gives the following output

@@ -1,4 +1,4 @@
-# ros_em7180
+# em7180
 
 A simple python package to use em7180 IMU in ROS. Tested on Raspberry Pi 3B and Odroid XU4 with ROS Kinec.
 
@@ -9,7 +9,7 @@ Data from the em7180 can be viewed with the provided subscriberEM7180.py subscri
 # Installation
 
     cd ~/catkin_ws/src
-    git clone -b master https://github.com/vortexntnu/ros_em7180.git
+    git clone -b master https://github.com/vortexntnu/em7180.git
     cd ~/catkin_ws
     catkin_make
 
@@ -21,11 +21,11 @@ Python SMbus requires root access. It may therefore be required to run it as roo
 You could however consider adding the user to the I2C usergroup to avoid running the package as root.
 
     #To run the publisher:
-    rosrun ros_em7180 publisherEM7180.py
+    rosrun em7180 publisherEM7180.py
     
     #To run the listener:
 
-    rosrun ros_em7180 subscriberEM7180.py
+    rosrun em7180 subscriberEM7180.py
 
     
     
