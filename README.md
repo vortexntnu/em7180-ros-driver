@@ -38,9 +38,8 @@ The __init__.py and parts of publisherEM7180.py are based off of the github repo
 subscriberEM7180:
 The listener.py displays the data received by subscribing to the topic /SensorData published by EM7180Publisher. The code is meant to serve as an example on how to fetch data from the topic. It's also useful for debugging purposes as it displays the data and visualizes the position in 3D space.
 
-
-
-
+## Angles
+This project uses Tait-Bryan angles, commonly used in aircraft orientation.  In this coordinate system, the positive z-axis is down toward Earth.  Yaw is the angle between Sensor x-axis and Earth magnetic North (or true North if corrected for local declination, looking down on the sensor positive yaw is counterclockwise.  Pitch is angle between sensor x-axis and Earth ground plane, toward the Earth is positive, up toward the sky is negative.  Roll is angle between sensor y-axis and Earth ground plane, y-axis up is positive roll.  These arise from the definition of the homogeneous rotation matrix constructed from q.  Tait-Bryan angles as well as Euler angles are non-commutative that is, the get the correct orientation the rotations must be applied in the correct order which for this configuration is yaw, pitch, and then roll.  For more information see this [Wikipedia article](http://en.wikipedia.org/wiki/Conversion_between_q_and_Euler_angles) which has additional links.
 
 
 # Credits

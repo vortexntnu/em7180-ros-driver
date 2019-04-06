@@ -23,22 +23,6 @@ while True:
         print('ERROR: ' + em7180.getErrorString())
         exit(1)
 
-    # Define output variables from updated quaternion---these are Tait-Bryan
-    # angles, commonly used in aircraft orientation.  In this coordinate
-    # system, the positive z-axis is down toward Earth.  Yaw is the angle
-    # between Sensor x-axis and Earth magnetic North (or true North if
-    # corrected for local declination, looking down on the sensor positive
-    # yaw is counterclockwise.  Pitch is angle between sensor x-axis and
-    # Earth ground plane, toward the Earth is positive, up toward the sky is
-    # negative.  Roll is angle between sensor y-axis and Earth ground plane,
-    # y-axis up is positive roll.  These arise from the definition of the
-    # homogeneous rotation matrix constructed from q.  Tait-Bryan
-    # angles as well as Euler angles are non-commutative that is, the get
-    # the correct orientation the rotations must be applied in the correct
-    # order which for this configuration is yaw, pitch, and then roll.  For
-    # more see http://en.wikipedia.org/wiki/Conversion_between_q_and_Euler_angles 
-    # which has additional links.
-
     def publish_imu_sensor_data(mag_x, mag_y, mag_z):
         rospy.init_node('em7180')
 
