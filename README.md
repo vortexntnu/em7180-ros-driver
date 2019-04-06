@@ -47,5 +47,5 @@ This project uses Tait-Bryan angles, commonly used in aircraft orientation.  In 
 
 
 # Credits
-The package uses some python scripts provided by simondlevy's [repository](https://github.com/simondlevy/EM7180)
+The package uses some python scripts provided by simondlevy's [repository](https://github.com/simondlevy/EM7180).
 
