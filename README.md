@@ -1,6 +1,6 @@
 # em7180
 
-A simple python package to use em7180 IMU in ROS. Tested on Raspberry Pi 3B and Odroid XU4 with ROS Kinec.
+A simple python package to use em7180 IMU in ROS. Tested on Raspberry Pi 3B and Odroid XU4 with ROS Kinetic.
 
 # Visualization
 
@@ -18,12 +18,16 @@ Data from the em7180 can be viewed with the provided subscriberEM7180.py subscri
 Python SMbus requires root access. It may therefore be required to run it as root:
 
     sudo su
+
 You could however consider adding the user to the I2C usergroup to avoid running the package as root.
 
-    #To run the publisher:
+    adduser $USER i2c
+
+To run the publisher:
+
     rosrun em7180 publisherEM7180.py
     
-    #To run the listener:
+To run the listener:
 
     rosrun em7180 subscriberEM7180.py
 
@@ -43,5 +47,5 @@ This project uses Tait-Bryan angles, commonly used in aircraft orientation.  In 
 
 
 # Credits
-The package uses some python scripts provided by simondlevy's repository: https://github.com/simondlevy/EM7180
+The package uses some python scripts provided by simondlevy's [repository](https://github.com/simondlevy/EM7180)
 
