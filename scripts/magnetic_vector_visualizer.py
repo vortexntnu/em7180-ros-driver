@@ -53,8 +53,8 @@ def publish_visualization_of_magnetic_vector():
         visualization.scale.z = 0.2
 
         visualization_publisher.publish(visualization)
-
-        rate.sleep()
+        
+    rate.sleep()
 
 
 if __name__ == '__main__':
