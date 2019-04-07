@@ -8,8 +8,8 @@ from geometry_msgs.msg import Point
 def callback(data):
     visualization = Marker()
 
-    visualization.header.frame_id = "magnetometer_link"
-    visualization.header.stamp = rospy.Time()
+    visualization.header.frame_id = "magnetic_vector"
+    visualization.header.stamp = rospy.Time.now()
     visualization.ns = "my_namespace"
     visualization.id = 0
     visualization.type = visualization.ARROW
@@ -24,9 +24,9 @@ def callback(data):
     p1.x = 0
     p1.y = 0
     p1.z = 0
-    p2.x = data.magnetic_field.x
-    p2.y = data.magnetic_field.y
-    p2.z = data.magnetic_field.z
+    p2.x = data.magnetic_field.x*0.001
+    p2.y = data.magnetic_field.y*0.001
+    p2.z = data.magnetic_field.z*0.001
 
     visualization.points.append(p1)
     visualization.points.append(p2)
@@ -42,11 +42,12 @@ def callback(data):
     visualization.pose.orientation.y = 0
     visualization.pose.orientation.z = 0
     visualization.pose.orientation.w = 1
-    visualization.scale.x = 0.2
-    visualization.scale.y = 0.3
-    visualization.scale.z = 0.2
-
-    print("sdaf")
+    visualization.scale.x = 0.02
+    visualization.scale.y = 0.03
+    visualization.scale.z = 0.02
+    
+    visualization.color.a = 1.0
+    visualization.color.g = 1.0
 
     visualization_publisher.publish(visualization)
 

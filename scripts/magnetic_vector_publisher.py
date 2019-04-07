@@ -33,7 +33,7 @@ def main():
             magnetic_vector = MagneticField()
 
             magnetic_vector.header.stamp = rospy.Time.now()
-            magnetic_vector.header.frame_id = "magnetometer_link"
+            magnetic_vector.header.frame_id = "magnetic_vector"
 
             magnetic_vector.magnetic_field.x = mx
             magnetic_vector.magnetic_field.y = my
