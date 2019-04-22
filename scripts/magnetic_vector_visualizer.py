@@ -45,18 +45,13 @@ def callback(data):
     visualization.scale.x = 0.2
     visualization.scale.y = 0.3
     visualization.scale.z = 0.2
-
     visualization.color.a = 1
-
-
-    #print("sdaf")
-
     visualization_publisher.publish(visualization)
 
 
 def publish_visualization_of_magnetic_vector():
     global visualization_publisher
-    # Initialize node
+    
     rospy.init_node('magnetic_vector_visualization')
     visualization_publisher = rospy.Publisher('em7180/vis', Marker, queue_size=10)
     rospy.Subscriber('imu/mag', MagneticField, callback)
