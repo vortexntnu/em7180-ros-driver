@@ -9,7 +9,7 @@ def callback(data):
     visualization = Marker()
 
     visualization.header.frame_id = "magnetometer_link"
-    visualization.header.stamp = rospy.Time()
+    visualization.header.stamp = rospy.Time.now()
     visualization.ns = "my_namespace"
     visualization.id = 0
     visualization.type = visualization.ARROW
@@ -46,7 +46,10 @@ def callback(data):
     visualization.scale.y = 0.3
     visualization.scale.z = 0.2
 
-    print("sdaf")
+    visualization.color.a = 1
+
+
+    #print("sdaf")
 
     visualization_publisher.publish(visualization)
 
