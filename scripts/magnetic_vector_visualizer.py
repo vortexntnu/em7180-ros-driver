@@ -38,9 +38,7 @@ def callback(data):
     visualization.scale.x = 0.2
     visualization.scale.y = 0.3
     visualization.scale.z = 0.2
-
     visualization.color.a = 1
-
     visualization_publisher.publish(visualization)
 
 

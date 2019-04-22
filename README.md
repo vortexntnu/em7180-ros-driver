@@ -36,7 +36,7 @@ To run the listener:
 # Documentation
 
 publisherEM7180: 
-The __init__.py and parts of publisherEM7180.py are based off of the github repository https://github.com/simondlevy/EM7180 to get the desired sensor data from the EM7180. This mastertest.py has now been updated to publish data to ROS where a custom message including sensor_msgs/IMU type is used for roll, pitch, yaw, accelerationX, accelerationY, accelerationZ (body coordinates), angularVelX, angularVely, angularVelz. Temperature, pressure and altidude has been implemented with sensor_msgs/Temperature, sensor_msgs/FluidPressure and a Float64 for altitude inside this custom message. 
+The \_\_init\_\_.py and parts of publisherEM7180.py are based off of the github repository https://github.com/simondlevy/EM7180 to get the desired sensor data from the EM7180. This mastertest.py has now been updated to publish data to ROS where a custom message including sensor_msgs/IMU type is used for roll, pitch, yaw, accelerationX, accelerationY, accelerationZ (body coordinates), angularVelX, angularVely, angularVelz. Temperature, pressure and altidude has been implemented with sensor_msgs/Temperature, sensor_msgs/FluidPressure and a Float64 for altitude inside this custom message. 
 
 
 subscriberEM7180:
